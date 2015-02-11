@@ -15,13 +15,14 @@ import roboguice.activity.RoboActivity;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
 import ru.terra.btdiag.activity.*;
+import ru.terra.btdiag.chat.ChatService;
+import ru.terra.btdiag.core.InfoService;
 import ru.terra.btdiag.core.Logger;
+import ru.terra.btdiag.net.core.OBDRest;
+import ru.terra.btdiag.net.task.SendTroubleAsyncTask;
 import ru.terra.btdiag.obd.io.AbstractGatewayService;
 import ru.terra.btdiag.obd.io.ObdGatewayService;
 import ru.terra.btdiag.obd.io.ProtocolSelectionAsyncTask;
-import ru.terra.btdiag.net.core.OBDRest;
-import ru.terra.btdiag.chat.ChatService;
-import ru.terra.btdiag.net.task.SendTroubleAsyncTask;
 
 import javax.inject.Inject;
 import java.util.Date;
@@ -85,10 +86,11 @@ public class MainActivity extends RoboActivity {
             Toast.makeText(this, "Blutooth ok", Toast.LENGTH_SHORT).show();
         }
 
-        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("auto_connect", false)) {
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(R.string.auto_connect), false)) {
             bindService(new Intent(this, ObdGatewayService.class), serviceConn, Context.BIND_AUTO_CREATE);
             startService(new Intent(this, ChatService.class));
         }
+        startService(new Intent(this, InfoService.class));
 
         if (PreferenceManager.getDefaultSharedPreferences(this).getString(ConfigActivity.BLUETOOTH_LIST_KEY, "").length() == 0)
             Toast.makeText(this, "Не выбрано устройство bluetooth", Toast.LENGTH_LONG).show();

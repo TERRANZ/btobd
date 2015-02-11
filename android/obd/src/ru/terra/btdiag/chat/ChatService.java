@@ -15,10 +15,11 @@ import roboguice.service.RoboIntentService;
 import ru.terra.btdiag.MainActivity;
 import ru.terra.btdiag.R;
 import ru.terra.btdiag.activity.ChatActivity;
-import ru.terra.btdiag.core.constants.URLConstants;
+import ru.terra.btdiag.chat.db.entity.MessageEntity;
+import ru.terra.btdiag.core.InfoService;
 import ru.terra.btdiag.core.Logger;
 import ru.terra.btdiag.core.SettingsService;
-import ru.terra.btdiag.chat.db.entity.MessageEntity;
+import ru.terra.btdiag.core.constants.URLConstants;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;
@@ -67,8 +68,6 @@ public class ChatService extends RoboIntentService {
         } catch (Exception e) {
             Logger.e(TAG, "Unable to start chat service", e);
         }
-
-
     }
 
     @Override

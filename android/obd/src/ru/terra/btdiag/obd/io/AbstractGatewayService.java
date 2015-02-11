@@ -19,9 +19,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public abstract class AbstractGatewayService extends RoboService {
     private static final String TAG = AbstractGatewayService.class.getName();
-    public static final int NOTIFICATION_ID = 1;
-    @Inject
-    protected NotificationManager notificationManager;
 
     protected Context ctx;
     protected boolean isRunning = false;
@@ -46,7 +43,7 @@ public abstract class AbstractGatewayService extends RoboService {
     public void onDestroy() {
         super.onDestroy();
         Logger.d(TAG, "Destroying service...");
-        notificationManager.cancel(NOTIFICATION_ID);
+//        notificationManager.cancel(NOTIFICATION_ID);
         Logger.d(TAG, "Service destroyed.");
     }
 
@@ -96,26 +93,7 @@ public abstract class AbstractGatewayService extends RoboService {
     /**
      * Show a notification while this service is running.
      */
-    protected void showNotification(String contentTitle, String contentText, int icon, boolean ongoing, boolean notify, boolean vibrate) {
-        final PendingIntent contentIntent = PendingIntent.getActivity(ctx, 0, new Intent(ctx, MainActivity.class), 0);
-        final NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(ctx);
-        notificationBuilder.setContentTitle(contentTitle)
-                .setContentText(contentText).setSmallIcon(icon)
-                .setContentIntent(contentIntent)
-                .setWhen(System.currentTimeMillis());
-        // can cancel?
-        if (ongoing) {
-            notificationBuilder.setOngoing(true);
-        } else {
-            notificationBuilder.setAutoCancel(true);
-        }
-        if (vibrate) {
-            notificationBuilder.setDefaults(Notification.DEFAULT_VIBRATE);
-        }
-        if (notify) {
-            notificationManager.notify(NOTIFICATION_ID, notificationBuilder.getNotification());
-        }
-    }
+
 
     public void setContext(Context c) {
         ctx = c;

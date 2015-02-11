@@ -23,12 +23,13 @@ import ru.terra.btdiag.MainActivity;
 import ru.terra.btdiag.R;
 import ru.terra.btdiag.activity.ChartActivity;
 import ru.terra.btdiag.activity.ConfigActivity;
-import ru.terra.btdiag.obd.commands.*;
-import ru.terra.btdiag.core.constants.Constants;
+import ru.terra.btdiag.core.InfoService;
 import ru.terra.btdiag.core.Logger;
 import ru.terra.btdiag.core.SettingsService;
+import ru.terra.btdiag.core.constants.Constants;
 import ru.terra.btdiag.net.core.OBDRest;
 import ru.terra.btdiag.net.dto.OBDInfoDto;
+import ru.terra.btdiag.obd.commands.*;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -116,7 +117,7 @@ public class ObdGatewayService extends AbstractGatewayService implements GoogleP
         Log.d(TAG, "Stopping Bluetooth discovery.");
         btAdapter.cancelDiscovery();
 
-        showNotification("Tap to open OBD-Reader", "Starting OBD connection..", R.drawable.ic_launcher, true, true, false);
+//        showNotification("Tap to open OBD-Reader", "Starting OBD connection..", R.drawable.ic_launcher, true, true, false);
 
         try {
             startObdConnection();
@@ -223,7 +224,7 @@ public class ObdGatewayService extends AbstractGatewayService implements GoogleP
                     job.setState(ObdCommandJob.ObdCommandJobState.RUNNING);
                     job.getCommand().run(sock.getInputStream(), sock.getOutputStream());
                 } else
-                    // log not neww job
+                    // log not new job
                     Logger.w(TAG,
                             "Job state was not new, so it shouldn't be in queue. BUG ALERT!");
             } catch (Exception e) {
@@ -271,7 +272,7 @@ public class ObdGatewayService extends AbstractGatewayService implements GoogleP
     public void stopService() {
         Logger.d(TAG, "Stopping service..");
 
-        notificationManager.cancel(NOTIFICATION_ID);
+//        notificationManager.cancel(NOTIFICATION_ID);
         jobsQueue.removeAll(jobsQueue); // TODO is this safe?
         isRunning = false;
 
@@ -316,5 +317,6 @@ public class ObdGatewayService extends AbstractGatewayService implements GoogleP
 
     private void sendStatus(String text) {
         LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(MainActivity.STATUS_RECEIVER).putExtra("type", 0).putExtra("text", text));
+        LocalBroadcastManager.getInstance(this).sendBroadcast(new Intent(InfoService.INFO_BROADCAST_ACTION).putExtra("text", text));
     }
 }
