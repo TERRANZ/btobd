@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <title>Чат</title>
+    <script src="//code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <link href="http://jqmdesigner.appspot.com/gk/lib/jquery.mobile/1.4.5/jquery.mobile-1.4.5.min.css" rel="stylesheet"
+          type="text/css"/>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link type="text/css" rel="stylesheet" media="screen"
+          href="http://xn--80aafhfrpg0adapheyc1nya.xn--p1ai:8182/builds/converse.min.css"/>
+    <![if gte IE 9]>
+    <script src="http://xn--80aafhfrpg0adapheyc1nya.xn--p1ai:8182/builds/converse.website.min.js"></script>
+    <![endif]>
+    <!--[if lt IE 9]>
+    <script src="http://xn--80aafhfrpg0adapheyc1nya.xn--p1ai:8182/builds/converse.website-no-otr.min.js"></script>
+    <script src="/btobd/resources/js/mobile.js"></script>
+    <![endif]-->
+</head>
+<body>
+<!-- Home -->
+<div data-role="page" id="pagemain">
+    <nav id="navbar"/>
+    <div id="load_marker"/>
+</div>
+<script>
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) != -1) return c.substring(name.length,c.length);
+    }
+    return "";
+}
+
+    require(['converse'], function (converse) {
+    var user = getCookie("user");
+    var rid = new Date().getTime();
+    var request = "<body content='text/xml; charset=utf-8'";
+      request += "from='"+user+"@xn--80aafhfrpg0adapheyc1nya.xn--p1ai'";
+      request += "hold='1'";
+      request += "rid='"+rid+"'";
+      request += "to='xn--80aafhfrpg0adapheyc1nya.xn--p1ai'";
+      request += "route='xn--80aafhfrpg0adapheyc1nya.xn--p1ai:5222'";
+      request += "ver='1.6'";
+      request += "wait='60'";
+      request += "ack='1'";
+      request += "xml:lang='en'";
+      request += "xmlns='http://jabber.org/protocol/httpbind'/>";
+
+      $.ajax({
+        type: "POST",
+        dataType: "xml",
+        data: request,
+        url: "http://xn--80aafhfrpg0adapheyc1nya.xn--p1ai:8182/bosh/httpbind",
+        success: function( data ) {
+            var sid = $(data).find("sid").text();
+            var jid = user+"@xn--80aafhfrpg0adapheyc1nya.xn--p1ai";
+            converse.initialize({
+            bosh_service_url: 'http://xn--80aafhfrpg0adapheyc1nya.xn--p1ai:8182/bosh/',
+            i18n: locales['en'],
+            keepalive: true,
+            message_carbons: true,
+            play_sounds: true,
+            roster_groups: true,
+            sid : sid,
+            rid : rid,
+            jid : jid,
+            show_controlbox_by_default: true,
+            xhr_user_search: false
+        });
+        }
+        });
+
+
+    });
+
+
+
+
+
+</script>
+</body>
+</html>

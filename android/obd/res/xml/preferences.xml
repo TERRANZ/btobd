@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+            android:title="OBD Preferences">
+
+        <CheckBoxPreference
+                android:key="@string/auto_connect"
+                android:defaultValue="false"
+                android:title="Enable auto connect to server"
+                android:summaryOff="Disable auto connect to server"
+                android:summaryOn="EEnable auto connect to server"
+                android:dialogTitle="Enable auto connect to server"/>
+
+        <ListPreference
+                android:key="bluetooth_list_preference"
+                android:title="Bluetooth Devices"
+                android:summary="List of paired bluetooth devices."
+                android:dialogTitle="Bluetooth Devices"/>
+
+    </PreferenceCategory>
+    <PreferenceCategory
+            android:title="OBD Commands">
+        <PreferenceScreen
+                android:key="obd_commands_screen"
+                android:title="OBD Commands"
+                android:summary="Select the commands you would like to see in real-time.">
+        </PreferenceScreen>
+    </PreferenceCategory>
+    <PreferenceCategory
+            android:title="OBD Protocol">
+        <PreferenceScreen
+                android:key="obd_protocols_screen"
+                android:title="OBD Protocol"
+                android:summary="Select the protocol you would like to use.">
+            <ListPreference
+                    android:title="Select protocol"
+                    android:key="@string/obd_protocol"
+                    android:defaultValue="AUTO"
+                    android:entries="@array/protocolsNamesArray"
+                    android:entryValues="@array/protocolsArray"/>
+        </PreferenceScreen>
+    </PreferenceCategory>
+</PreferenceScreen>

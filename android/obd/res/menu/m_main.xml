@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/mi_charts"
+          android:showAsAction="withText|always"
+          android:title="Инфо"/>
+
+    <item android:id="@+id/mi_settings"
+          android:showAsAction="withText"
+          android:title="Настройки"/>
+
+    <item android:id="@+id/mi_troubles"
+          android:showAsAction="withText|always"
+          android:title="Ошибки"/>
+
+    <item android:id="@+id/mi_login"
+          android:showAsAction="withText|always"
+          android:title="Вход на сервер"/>
+
+    <item android:id="@+id/mi_chat"
+          android:showAsAction="withText|always"
+          android:title="Чат"/>
+</menu>

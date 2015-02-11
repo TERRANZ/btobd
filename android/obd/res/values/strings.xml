@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">btdiag</string>
+
+    <string name="error_caught">Ошибка</string>
+    <string name="username">username</string>
+    <string name="password">password</string>
+    <string name="logged_in">logged_in</string>
+    <string name="auto_connect">auto_connect</string>
+</resources>
+

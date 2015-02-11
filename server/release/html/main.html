@@ -1,0 +1,326 @@
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <link href="http://jqmdesigner.appspot.com/gk/lib/jquery.mobile/1.4.5/jquery.mobile-1.4.5.min.css" rel="stylesheet"
+          type="text/css"/>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script>
+    $(document).on("mobileinit", function () {
+      $.mobile.autoInitializePage = false;
+      $.mobile.hashListeningEnabled = false;
+    });
+
+    function mobileInitPage() {
+      $.mobile.hashListeningEnabled = true;
+      $.mobile.initializePage();
+    };
+
+
+
+
+    </script>
+    <script src="//code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <!-- Uncomment the following to include cordova in your android project -->
+    <!--<script src="http://jqmdesigner.appspot.com/platforms/android/cordova.js"></script>-->
+    <!-- GK Loader use RequireJS to load module -->
+    <script src="http://requirejs.org/docs/release/2.1.11/minified/require.js"></script>
+    <!--Plug in GK-->
+    <script src="http://jqmdesigner.appspot.com/components/jquery.gk/jquery.gk.min.js"></script>
+    <!-- Load GK components -->
+    <script components="http://jqmdesigner.appspot.com/components/gk-jquerymobile/jqm-table.html,http://jqmdesigner.appspot.com/components/gk-jquerymobile/content.html,http://jqmdesigner.appspot.com/components/gk-chart/linechart.html,http://jqmdesigner.appspot.com/components/gk-jquerymobile/page.html"
+            callback="mobileInitPage" src="http://jqmdesigner.appspot.com/components/gk-loader/gk-loader.js"></script>
+    <!-- Export JS  -->
+    <script>
+    $(document).one("pageshow", "#chart", function () {
+
+    });
+
+    $(document).one("pageshow" ,"#main",function () {
+        loadParams();
+    });
+
+
+
+
+    </script>
+    <title>OBD Diag</title>
+
+</head>
+
+<body gk-app>
+<nav id="navbar"/>
+<!-- Page: login  -->
+<div id="login" data-role="page">
+    <div role="main" class="ui-content">
+        <a href="https://terranout.ath.cx/public.php?service=files&t=05b760816eafffaf8bcceb8a27fb4619">Скачать сборку</a>
+        <a class="ui-btn" href="#reg">Регистрация</a>
+
+        <div class="ui-field-contain">
+            <label for="j_username">Логин</label>
+            <input type="text" name id="j_username">
+        </div>
+        <div class="ui-field-contain">
+            <label for="j_password">Пароль</label>
+            <input type="text" name id="j_password">
+        </div>
+        <a class="ui-btn" href="#" onclick="userLogin();">Вход</a>
+    </div>
+</div>
+<!-- Page: reg  -->
+<div id="reg" data-role="page" is="page">
+    <div role="main" class="ui-content" is="content">
+        <a class="ui-btn" href="#login">Назад</a>
+
+        <div class="ui-field-contain">
+            <label for="user">Логин</label>
+            <input type="text" name id="user">
+        </div>
+        <div class="ui-field-contain">
+            <label for="pass">Пароль</label>
+            <input type="text" name id="pass">
+        </div>
+        <div class="ui-field-contain">
+            <label for="email">Электронная почта</label>
+            <input type="text" name id="email">
+        </div>
+        <a class="ui-btn" onclick="userReg();">Регистрация</a>
+    </div>
+</div>
+<!-- Page: main  -->
+<div id="main" data-role="page" is="page">
+    <div data-role="header" data-position="fixed">
+        <h3>OBD Diag</h3>
+    </div>
+    <div role="main" class="ui-content" is="content">
+        <a onclick="window.open('/btobd/ui/chat');">Окно чата</a>
+        <a class="ui-btn" href="#stat" onclick="load_info();">Статистика</a>
+        <a class="ui-btn" href="#errors">Ошибки</a>
+        <ul data-role="listview" data-inset="true">
+            <li data-role="list-divider">Параметры для отображения</li>
+            <div id="paramslist">
+            </div>
+        </ul>
+    </div>
+</div>
+<!-- Page: stat  -->
+<div id="stat" data-role="page" is="page">
+    <div data-role="header" data-position="fixed">
+        <h3>Статистика</h3>
+    </div>
+    <div role="main" class="ui-content" is="content">
+        <a class="ui-btn" href="#main">Назад</a>
+        <table data-role="table" data-mode="columntoggle" class="ui-responsive ui-shadow gk-decorate" id="statistics"
+               is="jqm-table">
+            <thead>
+            <tr>
+                <th data-priority="1">Дата</th>
+                <th data-priority="1">Параметр</th>
+                <th data-priority="1">Значение</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+<!-- Page: errors  -->
+<div id="errors" data-role="page" is="page">
+    <div data-role="header" data-position="fixed">
+        <h3>Ошибки</h3>
+    </div>
+    <div role="main" class="ui-content" is="content">
+        <a class="ui-btn" href="#main">Назад</a>
+    </div>
+</div>
+<!-- Page: chart  -->
+<div id="chart" data-role="page" is="page">
+    <div role="main" class="ui-content" is="content">
+        <div is="linechart" id="gk-120MNkf" height="800" width="800" cx="20" cy="20"></div>
+    </div>
+</div>
+</body>
+<script>
+function userLogin() {
+    if (!$("#loginbtn").hasClass('ui-disabled'))
+        $("#loginbtn").addClass('ui-disabled');
+    var user = $("#j_username").val();
+    var pass = $("#j_password").val();
+    if (user == null || user.length == 0) {
+        alert('Не указан логин');
+    } else if (pass == null || pass.length == 0) {
+        alert('Не введен пароль');
+    } else {
+        $.ajax({
+            url: '/btobd/login/do.login.json',
+            async: false,
+            type: 'get',
+            data: {
+                user: user,
+                pass: pass
+            },
+            success: function(data) {
+                $("#loginbtn").removeClass('ui-disabled');
+                if (data.logged == true) {
+                    setCookie("JSESSIONID", data.session);
+                    setCookie("username", user);
+                    $.mobile.changePage("#main");
+                } else {
+                    if (parseInt(data.errorCode) == 1000) {
+                        alert('Вы сделали слишком много попыток зайти на ресурс. Аккаунт временно заблокирован. Попробуйте еще раз через некоторое время.');
+                    } else if (parseInt(data.errorCode) == 1001) {
+                        alert('Ваш аккаунт заблокирован, обратитесь в поддержку для получения полной информации.');
+                    } else {
+                        alert('Неверный логин или пароль');
+                        $('#j_password').val('');
+                    }
+                }
+            }
+        });
+    }
+}
+
+function setCookie(key, value) {
+    var expires = new Date();
+    expires.setTime(expires.getTime() + (1 * 24 * 60 * 60 * 1000));
+    document.cookie = key + '=' + value + ';path=/' + ';expires=' + expires.toUTCString();
+}
+
+function userReg() {
+    var user = $("#user").val();
+    var pass = $("#pass").val();
+    var email = $("#email").val();
+    if (user == null || user.length == 0) {
+        alert('Не указан логин');
+    } else if (pass == null || pass.length == 0) {
+        alert('Не введен пароль');
+    } else {
+        $.ajax({
+            url: '/btobd/login/do.register.json',
+            async: true,
+            type: 'get',
+            data: {
+                user: user,
+                pass: pass,
+                email: email
+            },
+            success: function(data) {
+                if (data.logged == true) {
+                    setCookie("JSESSIONID", data.session);
+                    $.mobile.changePage("#main");
+                } else {
+                    if (parseInt(data.errorCode) == 1000) {
+                        alert('Вы сделали слишком много попыток зайти на ресурс. Аккаунт временно заблокирован. Попробуйте еще раз через некоторое время.');
+                    } else if (parseInt(data.errorCode) == 1001) {
+                        alert('Ваш аккаунт заблокирован, обратитесь в поддержку для получения полной информации.');
+                    } else {
+                        alert(data.message);
+                        $('#j_password').val('');
+                    }
+                }
+            }
+        });
+    }
+}
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) != -1) return c.substring(name.length,c.length);
+    }
+    return "";
+}
+
+function load_info() {
+    $.ajax({
+        url: '/btobd/obd/current.get.json',
+        async: false,
+        type: 'get',
+        data: {},
+        success: function(data) {
+            var htmlRet = "";
+            if (data.errorCode == 0) {
+                htmlRet += create_main_post(data.userId, data.command, data.result, data.id);
+                $("#currstate").html(htmlRet);
+            }
+        }
+    });
+
+    $.ajax({
+        url: '/btobd/obd/do.list.json',
+        async: false,
+        type: 'get',
+        data: {},
+        success: function(data) {
+                    var htmlRet = "";
+                    $.each(data.data, function(i, stat) {
+                        htmlRet += '<tr><th>'+new Date(stat.date)+'</th><td>'+stat.command+'</td><td>' + stat.result +'</td>';
+                    });
+                    $( "table#statistics tbody" ).html("");
+                    $( "table#statistics tbody" ).append(htmlRet).closest( "table#statistics" ).table( "refresh" );
+        }
+    });
+}
+function create_main_post(title, command, result, date, id) {
+    var ret = "<tr>";
+    var d = new Date(date);
+    ret += "<td>"+d+"</td>";
+    ret += "<td>"+command+"</td>";
+    ret += "<td>"+result+"</td>";
+    ret += "</tr>";
+    return ret;
+}
+
+function loadParams(){
+ $.ajax({
+        url: '/btobd/obd/get.params.json',
+        async: false,
+        type: 'get',
+        data: {},
+        success: function(data) {
+            var htmlRet = "";
+            if (data.errorCode == 0) {
+                $.each(data.data, function(i, c) {
+                        htmlRet += "<li><a href='#chart' name='"+c+"' onclick='loadChart(this);'>"+c+"</a></li>";
+                });
+                $("#paramslist").html(htmlRet);
+            }
+        }
+    });
+}
+
+function loadChart(link){
+$.ajax({
+        url: '/btobd/obd/get.paramvalues.json',
+        async: false,
+        type: 'get',
+        data: {param:link.name},
+        success: function(data) {
+            if (data.errorCode == 0) {
+                var values = [];
+                $.each(data.data, function(i, r) {
+                    values.push(r.match("\\d+"));
+                });
+                var rows = [];
+                for (var i = 0; i < values.length; i++)
+                    rows.push(i);
+
+                if ($("#gk-120MNkf").length > 0) {
+                    var chart = $("#gk-120MNkf").gk("render", rows, [values], {
+                        "colors": ["#f00"],
+                        nostroke: false,
+                        "axis": "0 0 1 1",
+                        "symbol": "circle",
+                        smooth: true
+                    });
+                };
+            }
+        }
+    });
+}
+
+
+
+</script>
+</html>

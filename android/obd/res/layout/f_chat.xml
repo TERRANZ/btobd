@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/lv_chat_messages"
+            android:layout_alignParentLeft="true"
+            android:layout_above="@+id/ll_chat_wrapper"
+            android:layout_below="@+id/tvChatTo"/>
+    <LinearLayout
+            android:id="@+id/ll_chat_wrapper"
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" android:gravity="center_vertical">
+        <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/edt_chat_msg"
+                android:layout_weight=".7"
+                />
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:text="..."
+                android:id="@+id/button"
+                android:layout_weight=".3"
+                android:onClick="sendMessage"
+                />
+    </LinearLayout>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="to"
+            android:id="@+id/tvChatTo" android:layout_alignParentTop="true" android:layout_centerHorizontal="true"/>
+
+</RelativeLayout>
