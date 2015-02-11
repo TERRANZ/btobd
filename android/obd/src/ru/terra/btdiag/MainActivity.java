@@ -16,12 +16,12 @@ import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
 import ru.terra.btdiag.activity.*;
 import ru.terra.btdiag.core.Logger;
-import ru.terra.btdiag.io.AbstractGatewayService;
-import ru.terra.btdiag.io.ObdGatewayService;
-import ru.terra.btdiag.io.ProtocolSelectionAsyncTask;
+import ru.terra.btdiag.obd.io.AbstractGatewayService;
+import ru.terra.btdiag.obd.io.ObdGatewayService;
+import ru.terra.btdiag.obd.io.ProtocolSelectionAsyncTask;
 import ru.terra.btdiag.net.core.OBDRest;
-import ru.terra.btdiag.service.ChatService;
-import ru.terra.btdiag.service.SendTroubleAsyncTask;
+import ru.terra.btdiag.chat.ChatService;
+import ru.terra.btdiag.net.task.SendTroubleAsyncTask;
 
 import javax.inject.Inject;
 import java.util.Date;

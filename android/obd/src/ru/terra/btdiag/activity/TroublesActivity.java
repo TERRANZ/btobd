@@ -24,7 +24,7 @@ import pt.lighthouselabs.obd.enums.ObdProtocols;
 import roboguice.activity.RoboListActivity;
 import roboguice.inject.ContentView;
 import ru.terra.btdiag.R;
-import ru.terra.btdiag.commands.ObdResetFixCommand;
+import ru.terra.btdiag.obd.commands.ObdResetFixCommand;
 import ru.terra.btdiag.core.Logger;
 import ru.terra.btdiag.core.SettingsService;
 

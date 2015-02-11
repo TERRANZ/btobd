@@ -1,4 +1,4 @@
-package ru.terra.btdiag.io;
+package ru.terra.btdiag.obd.io;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -10,7 +10,7 @@ import pt.lighthouselabs.obd.enums.ObdProtocols;
 import pt.lighthouselabs.obd.exceptions.MisunderstoodCommandException;
 import ru.terra.btdiag.R;
 import ru.terra.btdiag.activity.ConfigActivity;
-import ru.terra.btdiag.commands.*;
+import ru.terra.btdiag.obd.commands.*;
 import ru.terra.btdiag.core.AsyncTaskEx;
 import ru.terra.btdiag.core.Logger;
 import ru.terra.btdiag.core.SettingsService;

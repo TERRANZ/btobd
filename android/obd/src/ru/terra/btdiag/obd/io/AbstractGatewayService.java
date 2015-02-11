@@ -1,4 +1,4 @@
-package ru.terra.btdiag.io;
+package ru.terra.btdiag.obd.io;
 
 import android.app.Notification;
 import android.app.NotificationManager;

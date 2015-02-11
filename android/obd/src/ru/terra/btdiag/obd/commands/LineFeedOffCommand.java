@@ -1,21 +1,21 @@
-package ru.terra.btdiag.commands;
+package ru.terra.btdiag.obd.commands;
 
 import pt.lighthouselabs.obd.commands.protocol.ObdProtocolCommand;
 
 /**
- * Date: 06.01.15
- * Time: 18:10
+ * Date: 11.02.15
+ * Time: 13:19
  */
-public class ObdResetFixCommand extends ObdProtocolCommand {
+public class LineFeedOffCommand extends ObdProtocolCommand {
 
-    public ObdResetFixCommand() {
-        super("ATZ");
+    public LineFeedOffCommand() {
+        super("ATL0");
     }
 
     /**
      * @param other
      */
-    public ObdResetFixCommand(ObdResetFixCommand other) {
+    public LineFeedOffCommand(LineFeedOffCommand other) {
         super(other);
     }
 
@@ -26,7 +26,7 @@ public class ObdResetFixCommand extends ObdProtocolCommand {
 
     @Override
     public String getName() {
-        return "Reset OBD";
+        return "Line Feed Off";
     }
 
 }

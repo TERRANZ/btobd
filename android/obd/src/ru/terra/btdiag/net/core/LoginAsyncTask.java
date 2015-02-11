@@ -2,7 +2,7 @@ package ru.terra.btdiag.net.core;
 
 import android.content.Context;
 import android.widget.Toast;
-import ru.terra.btdiag.constants.Constants;
+import ru.terra.btdiag.core.constants.Constants;
 import ru.terra.btdiag.core.AsyncTaskEx;
 import ru.terra.btdiag.core.WorkIsDoneListener;
 import ru.terra.btdiag.net.dto.LoginDTO;

@@ -1,4 +1,4 @@
-package ru.terra.btdiag.db;
+package ru.terra.btdiag.chat.db;
 
 import android.content.ContentUris;
 import android.content.ContentValues;

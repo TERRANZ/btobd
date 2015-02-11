@@ -1,4 +1,4 @@
-package ru.terra.btdiag.config;
+package ru.terra.btdiag.core.config;
 
 import pt.lighthouselabs.obd.commands.ObdCommand;
 import pt.lighthouselabs.obd.commands.SpeedObdCommand;

@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import ru.terra.btdiag.R;
-import ru.terra.btdiag.db.entity.MessageEntity;
+import ru.terra.btdiag.chat.db.entity.MessageEntity;
 
 /**
  * Date: 13.12.14

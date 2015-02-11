@@ -1,7 +1,7 @@
 /*
  * TODO put header
  */
-package ru.terra.btdiag.io;
+package ru.terra.btdiag.obd.io;
 
 import pt.lighthouselabs.obd.commands.ObdCommand;
 

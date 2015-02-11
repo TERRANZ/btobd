@@ -18,8 +18,8 @@ import roboguice.inject.InjectView;
 import ru.terra.btdiag.R;
 import ru.terra.btdiag.activity.parts.ChatAdapter;
 import ru.terra.btdiag.core.SettingsService;
-import ru.terra.btdiag.db.entity.MessageEntity;
-import ru.terra.btdiag.service.ChatService;
+import ru.terra.btdiag.chat.db.entity.MessageEntity;
+import ru.terra.btdiag.chat.ChatService;
 import ru.terra.btdiag.viewpagerindicator.TitlePageIndicator;
 
 import javax.inject.Inject;

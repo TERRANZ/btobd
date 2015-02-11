@@ -1,4 +1,4 @@
-package ru.terra.btdiag.io;
+package ru.terra.btdiag.obd.io;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -23,8 +23,8 @@ import ru.terra.btdiag.MainActivity;
 import ru.terra.btdiag.R;
 import ru.terra.btdiag.activity.ChartActivity;
 import ru.terra.btdiag.activity.ConfigActivity;
-import ru.terra.btdiag.commands.*;
-import ru.terra.btdiag.constants.Constants;
+import ru.terra.btdiag.obd.commands.*;
+import ru.terra.btdiag.core.constants.Constants;
 import ru.terra.btdiag.core.Logger;
 import ru.terra.btdiag.core.SettingsService;
 import ru.terra.btdiag.net.core.OBDRest;

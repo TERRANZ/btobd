@@ -1,4 +1,4 @@
-package ru.terra.btdiag.constants;
+package ru.terra.btdiag.core.constants;
 
 public class URLConstants {
     public static final String SERVER_DOMAIN = "46.36.222.173";

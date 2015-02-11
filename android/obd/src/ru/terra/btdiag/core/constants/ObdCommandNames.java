@@ -1,4 +1,4 @@
-package ru.terra.btdiag.constants;
+package ru.terra.btdiag.core.constants;
 
 import pt.lighthouselabs.obd.commands.ObdCommand;
 import pt.lighthouselabs.obd.commands.SpeedObdCommand;

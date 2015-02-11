@@ -11,7 +11,7 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.widget.Toast;
 import pt.lighthouselabs.obd.commands.ObdCommand;
 import ru.terra.btdiag.R;
-import ru.terra.btdiag.config.ObdConfig;
+import ru.terra.btdiag.core.config.ObdConfig;
 
 import java.util.ArrayList;
 import java.util.Set;

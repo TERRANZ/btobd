@@ -1,13 +1,12 @@
-package ru.terra.btdiag.db;
+package ru.terra.btdiag.chat.db;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 import com.google.inject.Inject;
 import roboguice.inject.ContextSingleton;
 import ru.terra.btdiag.R;
-import ru.terra.btdiag.constants.Constants;
+import ru.terra.btdiag.core.constants.Constants;
 import ru.terra.btdiag.core.IOHelper;
 import ru.terra.btdiag.core.Logger;
 

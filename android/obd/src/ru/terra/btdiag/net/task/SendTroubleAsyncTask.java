@@ -1,4 +1,4 @@
-package ru.terra.btdiag.service;
+package ru.terra.btdiag.net.task;
 
 import android.content.Context;
 import org.acra.ACRA;

@@ -10,8 +10,8 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import roboguice.inject.ContextSingleton;
-import ru.terra.btdiag.constants.Constants;
-import ru.terra.btdiag.constants.URLConstants;
+import ru.terra.btdiag.core.constants.Constants;
+import ru.terra.btdiag.core.constants.URLConstants;
 import ru.terra.btdiag.core.Logger;
 import ru.terra.btdiag.core.SettingsService;
 

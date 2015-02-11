@@ -1,4 +1,4 @@
-package ru.terra.btdiag.commands;
+package ru.terra.btdiag.obd.commands;
 
 import pt.lighthouselabs.obd.commands.protocol.ObdProtocolCommand;
 

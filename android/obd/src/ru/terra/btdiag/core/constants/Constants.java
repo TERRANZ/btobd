@@ -1,4 +1,4 @@
-package ru.terra.btdiag.constants;
+package ru.terra.btdiag.core.constants;
 
 public interface Constants {
     public static final String CONFIG_SESSION = "sessionid";
@@ -9,5 +9,5 @@ public interface Constants {
     public static final int ADD_FEED_ACTION = 1;
     public static final int DB_VERSION = 1;
     public static final String DB_NAME = "btobd";
-    public static final String AUTHORITY = "ru.terra.btdiag.db.entity";
+    public static final String AUTHORITY = "ru.terra.btdiag.chat.db.entity";
 }

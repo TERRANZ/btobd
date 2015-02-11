@@ -1,4 +1,4 @@
-package ru.terra.btdiag.service;
+package ru.terra.btdiag.chat;
 
 import android.content.*;
 import android.support.v4.content.LocalBroadcastManager;
@@ -15,10 +15,10 @@ import roboguice.service.RoboIntentService;
 import ru.terra.btdiag.MainActivity;
 import ru.terra.btdiag.R;
 import ru.terra.btdiag.activity.ChatActivity;
-import ru.terra.btdiag.constants.URLConstants;
+import ru.terra.btdiag.core.constants.URLConstants;
 import ru.terra.btdiag.core.Logger;
 import ru.terra.btdiag.core.SettingsService;
-import ru.terra.btdiag.db.entity.MessageEntity;
+import ru.terra.btdiag.chat.db.entity.MessageEntity;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.X509TrustManager;

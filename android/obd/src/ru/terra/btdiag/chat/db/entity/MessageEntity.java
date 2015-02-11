@@ -1,8 +1,8 @@
-package ru.terra.btdiag.db.entity;
+package ru.terra.btdiag.chat.db.entity;
 
 import android.net.Uri;
 import android.provider.BaseColumns;
-import ru.terra.btdiag.constants.Constants;
+import ru.terra.btdiag.core.constants.Constants;
 
 /**
  * Date: 13.12.14

@@ -1,4 +1,4 @@
-package ru.terra.btdiag.constants;
+package ru.terra.btdiag.core.constants;
 
 public interface ErrorConstants {
 	public static final int ERR_NO_ERROR_ID = 0;
