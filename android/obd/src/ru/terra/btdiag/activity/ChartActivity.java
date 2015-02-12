@@ -116,9 +116,9 @@ public class ChartActivity extends RoboActivity {
         llChart.addView(graphView);
     }
 
-    public void stateUpdate(final ObdCommandJob job) {
-        final String cmdName = job.getCommand().getName();
-        final String cmdResult = job.getCommand().getFormattedResult();
+    public void stateUpdate(final ObdCommand job) {
+        final String cmdName = job.getName();
+        final String cmdResult = job.getFormattedResult();
 
         Logger.d(TAG, "Command result = " + cmdResult);
 
@@ -143,8 +143,8 @@ public class ChartActivity extends RoboActivity {
             Logger.e(TAG, "Unable to parse command result", e);
 
         }
-        if (job.getCommand() instanceof TroubleCodesObdCommand) {
-            Toast.makeText(this, "Найдена ошибка: " + job.getCommand().getFormattedResult(), Toast.LENGTH_LONG).show();
+        if (job instanceof TroubleCodesObdCommand) {
+            Toast.makeText(this, "Найдена ошибка: " + job.getFormattedResult(), Toast.LENGTH_LONG).show();
         }
 
         Logger.d(TAG, "Command " + cmdName + " result = " + cmdResult);

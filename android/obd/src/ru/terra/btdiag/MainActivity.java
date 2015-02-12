@@ -23,6 +23,7 @@ import ru.terra.btdiag.net.task.SendTroubleAsyncTask;
 import ru.terra.btdiag.obd.io.AbstractGatewayService;
 import ru.terra.btdiag.obd.io.ObdGatewayService;
 import ru.terra.btdiag.obd.io.ProtocolSelectionAsyncTask;
+import ru.terra.btdiag.obd.io.helper.BtObdConnectionHelper;
 
 import javax.inject.Inject;
 import java.util.Date;
@@ -40,6 +41,8 @@ public class MainActivity extends RoboActivity {
     public TextView tvObdStatus;
     @Inject
     public OBDRest obdRest;
+    @Inject
+    public BtObdConnectionHelper connectionHelper;
 
     private boolean preRequisites = true;
     private ServiceConnection serviceConn = new ServiceConnection() {
@@ -132,7 +135,7 @@ public class MainActivity extends RoboActivity {
     }
 
     public void autoSelectProtocol(View view) {
-        new ProtocolSelectionAsyncTask(this).execute();
+        new ProtocolSelectionAsyncTask(this, connectionHelper).execute();
     }
 
     public void testTroubleShoot(View view) {

@@ -1,16 +1,10 @@
 package ru.terra.btdiag.obd.io;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
-import com.google.inject.Inject;
 import roboguice.service.RoboService;
-import ru.terra.btdiag.MainActivity;
 import ru.terra.btdiag.core.Logger;
 
 import java.util.concurrent.BlockingQueue;

@@ -1,8 +1,5 @@
 package ru.terra.btdiag.obd.io;
 
-import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import org.acra.ACRA;
 import pt.lighthouselabs.obd.commands.ObdCommand;
@@ -13,11 +10,10 @@ import ru.terra.btdiag.activity.ConfigActivity;
 import ru.terra.btdiag.core.AsyncTaskEx;
 import ru.terra.btdiag.core.Logger;
 import ru.terra.btdiag.core.SettingsService;
-import ru.terra.btdiag.obd.commands.*;
-
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.UUID;
+import ru.terra.btdiag.obd.commands.GetAvailPIDSCommand;
+import ru.terra.btdiag.obd.commands.TryProtocolCommand;
+import ru.terra.btdiag.obd.io.helper.BtObdConnectionHelper;
+import ru.terra.btdiag.obd.io.helper.exception.BTOBDConnectionException;
 
 /**
  * Date: 05.01.15
@@ -26,47 +22,19 @@ import java.util.UUID;
 public class ProtocolSelectionAsyncTask extends AsyncTaskEx<Void, String, String> {
 
     private static final String TAG = ProtocolSelectionAsyncTask.class.getName();
-    private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private SettingsService settingsService;
-    private BluetoothDevice dev = null;
-    private BluetoothSocket sock = null;
-    private BluetoothSocket sockFallback = null;
+    private BtObdConnectionHelper connectionHelper;
 
-    public ProtocolSelectionAsyncTask(Context a) {
+    public ProtocolSelectionAsyncTask(Context a, BtObdConnectionHelper connectionHelper) {
         super(20000l, a);
+        this.connectionHelper = connectionHelper;
         settingsService = new SettingsService(a);
         showDialog("Определение протокола", "Запуск...");
-    }
-
-    private void connect() {
-        try {
-            // Instantiate a BluetoothSocket for the remote device and connect it.
-            sock = dev.createInsecureRfcommSocketToServiceRecord(MY_UUID);
-            sock.connect();
-            publishProgress("Подключено");
-        } catch (Exception e1) {
-            Logger.e(TAG, "There was an error while establishing Bluetooth connection. Falling back..", e1);
-            Class<?> clazz = sock.getRemoteDevice().getClass();
-            Class<?>[] paramTypes = new Class<?>[]{Integer.TYPE};
-            try {
-                Method m = clazz.getMethod("createRfcommSocket", paramTypes);
-                Object[] params = new Object[]{Integer.valueOf(1)};
-                sockFallback = (BluetoothSocket) m.invoke(sock.getRemoteDevice(), params);
-                sockFallback.connect();
-                sock = sockFallback;
-            } catch (Exception e2) {
-                ACRA.getErrorReporter().handleSilentException(e2);
-                Logger.e(TAG, "Couldn't fallback while establishing Bluetooth connection. Stopping app..", e2);
-                publishProgress("Ошибка: " + e2.getMessage());
-                stopTask();
-            }
-        }
     }
 
 
     @Override
     protected String doInBackground(Void... p) {
-        final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
         final String remoteDevice = settingsService.getSetting(ConfigActivity.BLUETOOTH_LIST_KEY, null);
         if (remoteDevice == null || remoteDevice.isEmpty()) {
             publishProgress("Не выбран bluetooth адаптер");
@@ -78,15 +46,22 @@ public class ProtocolSelectionAsyncTask extends AsyncTaskEx<Void, String, String
             stopTask();
             return null;
         }
-        dev = btAdapter.getRemoteDevice(remoteDevice);
-        Logger.d(TAG, "Stopping Bluetooth discovery.");
-        btAdapter.cancelDiscovery();
-        Logger.d(TAG, "Starting OBD connection..");
-        publishProgress("Старт");
+
         boolean found = false;
         int currentProtocol = ObdProtocols.values().length - 1;
+        try {
+            connectionHelper.start(remoteDevice);
+        } catch (BTOBDConnectionException e) {
+            publishProgress("Ошибка при подключении: " + e.getMessage());
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e2) {
+                e2.printStackTrace();
+            }
+            stopTask();
+        }
 
-        connect();
+        connect(remoteDevice);
 
         int tryes = 0;
 
@@ -95,12 +70,7 @@ public class ProtocolSelectionAsyncTask extends AsyncTaskEx<Void, String, String
                 publishProgress("Сброс адаптера");
                 try {
                     tryes++;
-                    execCommand(new ObdResetFixCommand());
-                    try {
-                        Thread.sleep(200);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    connectionHelper.doResetAdapter(context);
                 } catch (MisunderstoodCommandException e) {
                     Logger.e(TAG, "Controller responses ? on ATZ command, reconnect", e);
                     ACRA.getErrorReporter().handleSilentException(e);
@@ -110,23 +80,9 @@ public class ProtocolSelectionAsyncTask extends AsyncTaskEx<Void, String, String
                     } catch (InterruptedException e1) {
                         e.printStackTrace();
                     }
-                    connect();
+                    connect(remoteDevice);
                     continue;
                 }
-                execCommand(new EchoOffObdCommand());
-                execCommand(new EchoOffObdCommand());
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                execCommand(new LineFeedOffCommand());
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                execCommand(new TimeoutObdCommand(62));
 
                 ObdProtocols protocol = ObdProtocols.values()[currentProtocol];
                 publishProgress("Пробуем протокол: " + protocol.name());
@@ -139,7 +95,6 @@ public class ProtocolSelectionAsyncTask extends AsyncTaskEx<Void, String, String
                     publishProgress("Протокол " + protocol.name() + " подходит");
                     settingsService.saveSetting(context.getString(R.string.obd_protocol), protocol.name());
                 } catch (Exception e) {
-//                    ACRA.getErrorReporter().handleSilentException(e);
                     publishProgress("Протокол " + protocol.name() + " не подходит");
                     e.printStackTrace();
                 }
@@ -151,7 +106,7 @@ public class ProtocolSelectionAsyncTask extends AsyncTaskEx<Void, String, String
             }
 
             try {
-                Thread.sleep(500);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -173,15 +128,29 @@ public class ProtocolSelectionAsyncTask extends AsyncTaskEx<Void, String, String
         return null;
     }
 
-    private void stopTask() {
-        if (sock != null)
-            // close socket
+    private void connect(String remoteDevice) {
+        connectionHelper.disconnect();
+        try {
+            connectionHelper.connect();
+            connectionHelper.doResetAdapter(context);
+        } catch (BTOBDConnectionException e) {
+            publishProgress("Ошибка при подключении: " + e.getMessage());
             try {
-                sock.close();
-            } catch (IOException e) {
-                Logger.e(TAG, e.getMessage(), e);
-                ACRA.getErrorReporter().handleSilentException(e);
+                Thread.sleep(500);
+            } catch (InterruptedException e2) {
+                e2.printStackTrace();
             }
+            stopTask();
+        }
+    }
+
+    private void execCommand(ObdCommand cmd) {
+        connectionHelper.executeCommand(cmd, context);
+
+    }
+
+    private void stopTask() {
+        connectionHelper.disconnect();
     }
 
     @Override
@@ -198,10 +167,5 @@ public class ProtocolSelectionAsyncTask extends AsyncTaskEx<Void, String, String
     @Override
     protected void onPostExecute(String s) {
         dismissDialog();
-    }
-
-    private void execCommand(ObdCommand cmd) throws IOException, InterruptedException {
-        cmd.run(sock.getInputStream(), sock.getOutputStream());
-        Logger.d(TAG, "Command " + cmd.getName() + " result = " + cmd.getFormattedResult());
     }
 }
