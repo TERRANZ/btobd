@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
+import com.google.inject.Singleton;
 import pt.lighthouselabs.obd.commands.ObdCommand;
 import pt.lighthouselabs.obd.enums.ObdProtocols;
 import pt.lighthouselabs.obd.exceptions.ObdResponseException;
@@ -25,7 +26,7 @@ import java.util.UUID;
  * Date: 12.02.15
  * Time: 21:20
  */
-@ContextSingleton
+@Singleton
 public class BtObdConnectionHelper {
     private static final UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     private static final String TAG = BtObdConnectionHelper.class.getName();
@@ -87,6 +88,7 @@ public class BtObdConnectionHelper {
             try {
                 sock.close();
                 connectionStatus = ConnectionStatus.DISCONNECTED;
+                sendStatus("Отключено");
             } catch (IOException e) {
                 Logger.e(TAG, e.getMessage(), e);
             }
@@ -115,6 +117,11 @@ public class BtObdConnectionHelper {
         sendStatus("Выставление протокола");
         connectionStatus = ConnectionStatus.PROTOCOL_SELECTED;
         // Job for returning dummy data
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         if (!executeCommand(new AmbientAirTemperatureObdCommand(), runContext)) {
             Logger.w(TAG, "Unable to select protocol");
             throw new BTOBDConnectionException("Unable to select protocol");
@@ -127,9 +134,9 @@ public class BtObdConnectionHelper {
         try {
             cmd.run(sock.getInputStream(), sock.getOutputStream());
         } catch (Exception e) {
-            Logger.e(TAG, "Unable to reset adapter", e);
-            if (e instanceof ObdResponseException)
-                throw (ObdResponseException) e;
+            Logger.e(TAG, "Unable to execute command", e);
+//            if (e instanceof ObdResponseException)
+//                throw (ObdResponseException) e;
             return false;
         }
         if (runContext instanceof ChartActivity)

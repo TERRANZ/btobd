@@ -1,10 +1,8 @@
 package ru.terra.btdiag.obd.io;
 
 import android.content.Context;
-import org.acra.ACRA;
 import pt.lighthouselabs.obd.commands.ObdCommand;
 import pt.lighthouselabs.obd.enums.ObdProtocols;
-import pt.lighthouselabs.obd.exceptions.MisunderstoodCommandException;
 import ru.terra.btdiag.R;
 import ru.terra.btdiag.activity.ConfigActivity;
 import ru.terra.btdiag.core.AsyncTaskEx;
@@ -26,7 +24,7 @@ public class ProtocolSelectionAsyncTask extends AsyncTaskEx<Void, String, String
     private BtObdConnectionHelper connectionHelper;
 
     public ProtocolSelectionAsyncTask(Context a, BtObdConnectionHelper connectionHelper) {
-        super(20000l, a);
+        super(300000l, a);
         this.connectionHelper = connectionHelper;
         settingsService = new SettingsService(a);
         showDialog("Определение протокола", "Запуск...");
@@ -65,16 +63,21 @@ public class ProtocolSelectionAsyncTask extends AsyncTaskEx<Void, String, String
 
         int tryes = 0;
 
-        while (!found || tryes < ObdProtocols.values().length + 5) {
+        while (!found) {
+            if (tryes > ObdProtocols.values().length + 5) {
+                Logger.w(TAG, "Too many tries");
+                break;
+            }
             try {
                 publishProgress("Сброс адаптера");
+                Logger.d(TAG, "Сброс адаптера");
                 try {
                     tryes++;
                     connectionHelper.doResetAdapter(context);
-                } catch (MisunderstoodCommandException e) {
-                    Logger.e(TAG, "Controller responses ? on ATZ command, reconnect", e);
-                    ACRA.getErrorReporter().handleSilentException(e);
-                    stopTask();
+                } catch (Exception e) {
+                    Logger.e(TAG, "Controller unable to ATZ command, reconnect", e);
+//                    ACRA.getErrorReporter().handleSilentException(e);
+//                    stopTask();
                     try {
                         Thread.sleep(5000);
                     } catch (InterruptedException e1) {
@@ -87,28 +90,59 @@ public class ProtocolSelectionAsyncTask extends AsyncTaskEx<Void, String, String
                 ObdProtocols protocol = ObdProtocols.values()[currentProtocol];
                 publishProgress("Пробуем протокол: " + protocol.name());
                 Logger.d(TAG, "Trying protocol " + protocol.name());
-                Thread.sleep(500);
                 try {
-                    execCommand(new TryProtocolCommand(protocol));
-                    execCommand(new GetAvailPIDSCommand());
-                    found = true;
-                    publishProgress("Протокол " + protocol.name() + " подходит");
-                    settingsService.saveSetting(context.getString(R.string.obd_protocol), protocol.name());
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    Logger.w(TAG, "Sleeping interrupted", e);
+                }
+                try {
+                    if (execCommand(new TryProtocolCommand(protocol))) {
+                        GetAvailPIDSCommand tryCmd = new GetAvailPIDSCommand();
+                        if (execCommand(tryCmd)) {
+                            Logger.d(TAG, "Try cmd result = " + tryCmd.getResult());
+                            found = true;
+                            Logger.i(TAG, "Протокол " + protocol.name() + " подходит");
+                            publishProgress("Протокол " + protocol.name() + " подходит");
+                            settingsService.saveSetting(context.getString(R.string.obd_protocol), protocol.name());
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+//                e.printStackTrace();
+                            }
+                        } else {
+                            Logger.w(TAG, "Unable to get avail pids");
+                            publishProgress("Протокол " + protocol.name() + " не подходит");
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException e) {
+//                e.printStackTrace();
+                            }
+
+                        }
+                    } else
+                        Logger.w(TAG, "Unable to try protocol");
+
                 } catch (Exception e) {
                     publishProgress("Протокол " + protocol.name() + " не подходит");
-                    e.printStackTrace();
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e2) {
+//                e.printStackTrace();
+                    }
+//
+//  e.printStackTrace();
                 }
 
             } catch (Exception e) {
                 publishProgress("Ошибка: " + e.getMessage());
-                ACRA.getErrorReporter().handleSilentException(e);
+//                ACRA.getErrorReporter().handleSilentException(e);
                 e.printStackTrace();
             }
 
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+//                e.printStackTrace();
             }
 
             currentProtocol--;
@@ -120,7 +154,7 @@ public class ProtocolSelectionAsyncTask extends AsyncTaskEx<Void, String, String
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
 
         stopTask();
@@ -144,8 +178,8 @@ public class ProtocolSelectionAsyncTask extends AsyncTaskEx<Void, String, String
         }
     }
 
-    private void execCommand(ObdCommand cmd) {
-        connectionHelper.executeCommand(cmd, context);
+    private boolean execCommand(ObdCommand cmd) {
+        return connectionHelper.executeCommand(cmd, context);
 
     }
 

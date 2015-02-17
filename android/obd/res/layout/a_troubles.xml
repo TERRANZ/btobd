@@ -10,5 +10,9 @@
             android:layout_height="match_parent"
             android:id="@android:id/list"
             android:layout_gravity="center_horizontal"/>
-
+    <TextView android:id="@android:id/empty"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="#FF0000"
+              android:text="No data"/>
 </LinearLayout>

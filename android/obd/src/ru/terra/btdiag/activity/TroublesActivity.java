@@ -21,6 +21,7 @@ import roboguice.inject.ContentView;
 import ru.terra.btdiag.R;
 import ru.terra.btdiag.core.Logger;
 import ru.terra.btdiag.obd.io.helper.BtObdConnectionHelper;
+import ru.terra.btdiag.obd.io.helper.ConnectionStatus;
 import ru.terra.btdiag.obd.io.helper.exception.BTOBDConnectionException;
 
 /**
@@ -103,8 +104,10 @@ public class TroublesActivity extends RoboListActivity {
     };
 
     private void dataOk(String res) {
-        ArrayAdapter<String> myarrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, res.split("\n"));
-        setListAdapter(myarrayAdapter);
+        if (!res.isEmpty()) {
+            ArrayAdapter<String> myarrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, res.split("\n"));
+            setListAdapter(myarrayAdapter);
+        }
     }
 
     private class GetTroubleCodesTask extends AsyncTask<String, Integer, String> {
@@ -134,20 +137,26 @@ public class TroublesActivity extends RoboListActivity {
 
         @Override
         protected String doInBackground(String... params) {
+            boolean needToDisconnect = false;
             try {
-                onProgressUpdate(1);
-                connectionHelper.start(remoteDevice);
-                onProgressUpdate(2);
-                connectionHelper.connect();
-                onProgressUpdate(4);
-                connectionHelper.doResetAdapter(TroublesActivity.this);
-                onProgressUpdate(5);
-                ObdProtocols prot = ObdProtocols.valueOf(prefs.getString(getString(R.string.obd_protocol), String.valueOf(ObdProtocols.AUTO.getValue())));
-                connectionHelper.doSelectProtocol(prot, TroublesActivity.this);
+                if (connectionHelper.getConnectionStatus().equals(ConnectionStatus.NC)) {
+                    onProgressUpdate(1);
+                    connectionHelper.start(remoteDevice);
+                    onProgressUpdate(2);
+                    connectionHelper.connect();
+                    onProgressUpdate(4);
+                    connectionHelper.doResetAdapter(TroublesActivity.this);
+
+                    onProgressUpdate(5);
+                    ObdProtocols prot = ObdProtocols.valueOf(prefs.getString(getString(R.string.obd_protocol), String.valueOf(ObdProtocols.AUTO.getValue())));
+                    connectionHelper.doSelectProtocol(prot, TroublesActivity.this);
+                    needToDisconnect = true;
+                }
                 onProgressUpdate(6);
                 TroubleCodesObdCommand tcoc = new TroubleCodesObdCommand();
                 connectionHelper.executeCommand(tcoc, TroublesActivity.this);
-
+                Logger.d(TAG, "Trouble command result: " + tcoc.getResult());
+                Logger.d(TAG, "Trouble command formatted result: " + tcoc.getFormattedResult());
                 return tcoc.getFormattedResult();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -160,7 +169,8 @@ public class TroublesActivity extends RoboListActivity {
                 ACRA.getErrorReporter().handleException(e);
                 return null;
             } finally {
-                connectionHelper.disconnect();
+                if (needToDisconnect)
+                    connectionHelper.disconnect();
             }
         }
 
@@ -172,7 +182,10 @@ public class TroublesActivity extends RoboListActivity {
 
         @Override
         protected void onPostExecute(String result) {
-            progressDialog.dismiss();
+            try {
+                progressDialog.dismiss();
+            } catch (Exception e) {
+            }
             if (result == null) {
                 return;
             }

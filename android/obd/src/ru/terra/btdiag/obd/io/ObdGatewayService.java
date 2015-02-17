@@ -17,6 +17,7 @@ import ru.terra.btdiag.core.SettingsService;
 import ru.terra.btdiag.core.constants.Constants;
 import ru.terra.btdiag.net.core.OBDRest;
 import ru.terra.btdiag.net.dto.OBDInfoDto;
+import ru.terra.btdiag.net.task.SendInfoAsyncTask;
 import ru.terra.btdiag.obd.io.helper.BtObdConnectionHelper;
 import ru.terra.btdiag.obd.io.helper.exception.BTOBDConnectionException;
 
@@ -47,7 +48,7 @@ public class ObdGatewayService extends AbstractGatewayService implements GoogleP
             connectionHelper.start(prefs.getString(ConfigActivity.BLUETOOTH_LIST_KEY, null));
         } catch (BTOBDConnectionException e) {
             Logger.e(TAG, "There was an error while starting connection", e);
-            ACRA.getErrorReporter().handleException(e);
+//            ACRA.getErrorReporter().handleException(e);
             stopService();
             return false;
         }
@@ -124,12 +125,14 @@ public class ObdGatewayService extends AbstractGatewayService implements GoogleP
                     info.lat = lastLocation.getLatitude();
                     info.lon = lastLocation.getLongitude();
                 }
-                try {
-                    Logger.i("SendInfoService", "result = " + obdRest.sendInfo(info));
-                } catch (Exception e) {
-                    Logger.e(TAG, "Unable to send result to server", e);
-                    ACRA.getErrorReporter().handleSilentException(e);
-                }
+                new SendInfoAsyncTask(this, obdRest).execute(info);
+//                try {
+//
+//                    Logger.i("SendInfoService", "result = " + obdRest.sendInfo(info));
+//                } catch (Exception e) {
+//                    Logger.e(TAG, "Unable to send result to server", e);
+//                    ACRA.getErrorReporter().handleSilentException(e);
+//                }
             }
         }
         // will run next time a job is queued

@@ -160,7 +160,7 @@ function userLogin() {
             },
             success: function(data) {
                 $("#loginbtn").removeClass('ui-disabled');
-                if (data.logged == true) {
+                if (data.logged == "true") {
                     setCookie("JSESSIONID", data.session);
                     setCookie("username", user);
                     $.mobile.changePage("#main");
@@ -282,7 +282,7 @@ function loadParams(){
             var htmlRet = "";
             if (data.errorCode == 0) {
                 $.each(data.data, function(i, c) {
-                        htmlRet += "<li><a href='#chart' name='"+c+"' onclick='loadChart(this);'>"+c+"</a></li>";
+                        htmlRet += "<li><a href='#chart' name='"+c.$+"' onclick='loadChart(this);'>"+c.$+"</a></li>";
                 });
                 $("#paramslist").html(htmlRet);
             }
@@ -300,7 +300,7 @@ $.ajax({
             if (data.errorCode == 0) {
                 var values = [];
                 $.each(data.data, function(i, r) {
-                    values.push(r.match("\\d+"));
+                    values.push(r.$.match("\\d+"));
                 });
                 var rows = [];
                 for (var i = 0; i < values.length; i++)
