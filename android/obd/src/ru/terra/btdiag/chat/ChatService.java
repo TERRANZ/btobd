@@ -16,7 +16,6 @@ import ru.terra.btdiag.MainActivity;
 import ru.terra.btdiag.R;
 import ru.terra.btdiag.activity.ChatActivity;
 import ru.terra.btdiag.chat.db.entity.MessageEntity;
-import ru.terra.btdiag.core.InfoService;
 import ru.terra.btdiag.core.Logger;
 import ru.terra.btdiag.core.SettingsService;
 import ru.terra.btdiag.core.constants.URLConstants;
@@ -66,7 +65,7 @@ public class ChatService extends RoboIntentService {
         try {
             start();
         } catch (Exception e) {
-            Logger.e(TAG, "Unable to start chat service", e);
+            Logger.e(this, TAG, "Unable to start chat service", e);
         }
     }
 

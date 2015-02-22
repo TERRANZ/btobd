@@ -24,7 +24,7 @@ public class SendInfoAsyncTask extends AsyncTaskEx<OBDInfoDto, Void, Void> {
     @Override
     protected Void doInBackground(OBDInfoDto... infos) {
         try {
-            Logger.i("SendInfoService", "result = " + obdRest.sendInfo(infos[0]));
+            Logger.i(context, "SendInfoService", "result = " + obdRest.sendInfo(infos[0]));
         } catch (IOException e) {
             e.printStackTrace();
         } catch (UnableToLoginException e) {

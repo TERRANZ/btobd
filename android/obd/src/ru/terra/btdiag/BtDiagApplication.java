@@ -5,6 +5,7 @@ import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
 import org.acra.sender.HttpSender;
+import ru.terra.btdiag.core.SettingsService;
 
 /**
  * Date: 11.11.14
@@ -19,5 +20,6 @@ public class BtDiagApplication extends Application {
     public void onCreate() {
         ACRA.init(this);
         super.onCreate();
+        new SettingsService(this).clearLog();
     }
 }

@@ -48,10 +48,10 @@ public class MainActivity extends RoboActivity {
     private ServiceConnection serviceConn = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className, IBinder binder) {
-            Logger.d(TAG, className.toString() + " service is bound");
+            Logger.d(MainActivity.this, TAG, className.toString() + " service is bound");
             AbstractGatewayService service = ((AbstractGatewayService.AbstractGatewayServiceBinder) binder).getService();
             service.setContext(MainActivity.this);
-            Logger.d(TAG, "Starting the live data");
+            Logger.d(MainActivity.this, TAG, "Starting the live data");
             try {
                 service.startService();
             } catch (Exception e) {
@@ -65,7 +65,7 @@ public class MainActivity extends RoboActivity {
 
         @Override
         public void onServiceDisconnected(ComponentName className) {
-            Logger.d(TAG, className.toString() + " service is unbound");
+            Logger.d(MainActivity.this, TAG, className.toString() + " service is unbound");
         }
     };
     private StatusReceiver statusReceiver;

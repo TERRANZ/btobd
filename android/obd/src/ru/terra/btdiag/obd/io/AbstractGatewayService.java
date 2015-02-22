@@ -29,16 +29,16 @@ public abstract class AbstractGatewayService extends RoboService {
     @Override
     public void onCreate() {
         super.onCreate();
-        Logger.d(TAG, "Creating service..");
-        Logger.d(TAG, "Service created.");
+        Logger.d(this, TAG, "Creating service..");
+        Logger.d(this, TAG, "Service created.");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Logger.d(TAG, "Destroying service...");
+        Logger.d(this, TAG, "Destroying service...");
 //        notificationManager.cancel(NOTIFICATION_ID);
-        Logger.d(TAG, "Service destroyed.");
+        Logger.d(this, TAG, "Service destroyed.");
     }
 
     public boolean isRunning() {
@@ -60,15 +60,15 @@ public abstract class AbstractGatewayService extends RoboService {
      */
     public void queueJob(ObdCommandJob job) {
         queueCounter++;
-        Logger.d(TAG, "Adding job[" + queueCounter + "] to queue..");
+        Logger.d(this, TAG, "Adding job[" + queueCounter + "] to queue..");
 
         job.setId(queueCounter);
         try {
             jobsQueue.put(job);
-            Logger.d(TAG, "Job queued successfully.");
+            Logger.d(this, TAG, "Job queued successfully.");
         } catch (InterruptedException e) {
             job.setState(ObdCommandJob.ObdCommandJobState.QUEUE_ERROR);
-            Logger.e(TAG, "Failed to queue job.", e);
+            Logger.e(this, TAG, "Failed to queue job.", e);
         }
 
         if (!isQueueRunning) {

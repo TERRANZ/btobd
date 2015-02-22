@@ -7,5 +7,6 @@
     <string name="password">password</string>
     <string name="logged_in">logged_in</string>
     <string name="auto_connect">auto_connect</string>
+    <string name="log_strs">log_strs</string>
 </resources>
 

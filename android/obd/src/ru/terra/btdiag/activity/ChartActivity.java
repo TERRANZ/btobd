@@ -21,8 +21,8 @@ import roboguice.activity.RoboActivity;
 import roboguice.inject.ContentView;
 import roboguice.inject.InjectView;
 import ru.terra.btdiag.R;
-import ru.terra.btdiag.core.constants.ObdCommandNames;
 import ru.terra.btdiag.core.Logger;
+import ru.terra.btdiag.core.constants.ObdCommandNames;
 import ru.terra.btdiag.obd.io.AbstractGatewayService;
 import ru.terra.btdiag.obd.io.ObdCommandJob;
 import ru.terra.btdiag.obd.io.ObdGatewayService;
@@ -52,7 +52,7 @@ public class ChartActivity extends RoboActivity {
     private ServiceConnection serviceConn = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className, IBinder binder) {
-            Logger.d(TAG, className.toString() + " service is bound");
+            Logger.d(ChartActivity.this, TAG, className.toString() + " service is bound");
             isServiceBound = true;
             service = ((AbstractGatewayService.AbstractGatewayServiceBinder) binder).getService();
             service.setContext(ChartActivity.this);
@@ -61,7 +61,7 @@ public class ChartActivity extends RoboActivity {
 
         @Override
         public void onServiceDisconnected(ComponentName className) {
-            Logger.d(TAG, className.toString() + " service is unbound");
+            Logger.d(ChartActivity.this, TAG, className.toString() + " service is unbound");
             isServiceBound = false;
         }
     };
@@ -120,7 +120,7 @@ public class ChartActivity extends RoboActivity {
         final String cmdName = job.getName();
         final String cmdResult = job.getFormattedResult();
 
-        Logger.d(TAG, "Command result = " + cmdResult);
+        Logger.d(ChartActivity.this, TAG, "Command result = " + cmdResult);
 
         Double res = 0d;
 
@@ -132,7 +132,7 @@ public class ChartActivity extends RoboActivity {
                 numbers.add(m.group());
             }
         } catch (NullPointerException e) {
-            Logger.e(TAG, "Error while parsing result", e);
+            Logger.e(ChartActivity.this, TAG, "Error while parsing result", e);
         }
         if (numbers.size() > 0)
             res = Double.parseDouble(numbers.get(0));
@@ -140,14 +140,14 @@ public class ChartActivity extends RoboActivity {
             GraphViewData data = new GraphViewData(count++, res);
             graphViewSeries.appendData(data, true);
         } catch (Exception e) {
-            Logger.e(TAG, "Unable to parse command result", e);
+            Logger.e(ChartActivity.this, TAG, "Unable to parse command result", e);
 
         }
         if (job instanceof TroubleCodesObdCommand) {
             Toast.makeText(this, "Найдена ошибка: " + job.getFormattedResult(), Toast.LENGTH_LONG).show();
         }
 
-        Logger.d(TAG, "Command " + cmdName + " result = " + cmdResult);
+        Logger.d(ChartActivity.this, TAG, "Command " + cmdName + " result = " + cmdResult);
     }
 
     @Override
@@ -164,25 +164,25 @@ public class ChartActivity extends RoboActivity {
 
     protected void onResume() {
         super.onResume();
-        Logger.d(TAG, "Resuming..");
+        Logger.d(ChartActivity.this, TAG, "Resuming..");
     }
 
     private void startLiveData() {
-        Logger.d(TAG, "Starting live data..");
+        Logger.d(ChartActivity.this, TAG, "Starting live data..");
         doBindService();
         new Handler().post(mQueueCommands);
     }
 
     private void doBindService() {
         if (!isServiceBound) {
-            Logger.d(TAG, "Binding OBD service..");
+            Logger.d(ChartActivity.this, TAG, "Binding OBD service..");
             bindService(new Intent(this, ObdGatewayService.class), serviceConn, Context.BIND_AUTO_CREATE);
         }
     }
 
     private void doUnbindService() {
         if (isServiceBound) {
-            Logger.d(TAG, "Unbinding OBD service..");
+            Logger.d(ChartActivity.this, TAG, "Unbinding OBD service..");
             unbindService(serviceConn);
             isServiceBound = false;
         }

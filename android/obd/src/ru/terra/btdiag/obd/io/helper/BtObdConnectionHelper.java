@@ -10,7 +10,6 @@ import com.google.inject.Singleton;
 import pt.lighthouselabs.obd.commands.ObdCommand;
 import pt.lighthouselabs.obd.enums.ObdProtocols;
 import pt.lighthouselabs.obd.exceptions.ObdResponseException;
-import roboguice.inject.ContextSingleton;
 import ru.terra.btdiag.MainActivity;
 import ru.terra.btdiag.activity.ChartActivity;
 import ru.terra.btdiag.core.InfoService;
@@ -37,13 +36,13 @@ public class BtObdConnectionHelper {
     private String remoteDevice;
     private ConnectionStatus connectionStatus = ConnectionStatus.NC;
 
-    public BtObdConnectionHelper() {
-
+    public BtObdConnectionHelper(Context context) {
+        this.context = context;
     }
 
     public void start(String remoteDevice) throws BTOBDConnectionException {
         this.remoteDevice = remoteDevice;
-        Logger.d(TAG, "Starting service..");
+        Logger.d(context, TAG, "Starting service..");
         if (remoteDevice == null || remoteDevice.isEmpty())
             throw new BTOBDConnectionException("No Bluetooth device has been selected.");
         connectionStatus = ConnectionStatus.DEV_SELECTED;
@@ -53,7 +52,7 @@ public class BtObdConnectionHelper {
         final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
         dev = btAdapter.getRemoteDevice(remoteDevice);
         btAdapter.cancelDiscovery();
-        Logger.d(TAG, "Starting OBD connection..");
+        Logger.d(context, TAG, "Starting OBD connection..");
         sendStatus("Старт");
         try {
             // Instantiate a BluetoothSocket for the remote device and connect it.
@@ -62,7 +61,7 @@ public class BtObdConnectionHelper {
             sendStatus("Подключено");
             connectionStatus = ConnectionStatus.CONNECTED;
         } catch (Exception e1) {
-            Logger.e(TAG, "There was an error while establishing Bluetooth connection. Falling back..", e1);
+            Logger.e(context, TAG, "There was an error while establishing Bluetooth connection. Falling back..", e1);
             Class<?> clazz = sock.getRemoteDevice().getClass();
             Class<?>[] paramTypes = new Class<?>[]{Integer.TYPE};
             try {
@@ -74,7 +73,7 @@ public class BtObdConnectionHelper {
                 sendStatus("Подключено");
                 connectionStatus = ConnectionStatus.CONNECTED;
             } catch (Exception e2) {
-                Logger.e(TAG, "Couldn't fallback while establishing Bluetooth connection. Stopping app..", e2);
+                Logger.e(context, TAG, "Couldn't fallback while establishing Bluetooth connection. Stopping app..", e2);
                 sendStatus("Ошибка: " + e2.getMessage());
                 disconnect();
                 throw new BTOBDConnectionException("Ошибка: " + e2.getMessage());
@@ -90,14 +89,14 @@ public class BtObdConnectionHelper {
                 connectionStatus = ConnectionStatus.DISCONNECTED;
                 sendStatus("Отключено");
             } catch (IOException e) {
-                Logger.e(TAG, e.getMessage(), e);
+                Logger.e(context, TAG, e.getMessage(), e);
             }
         else
             connectionStatus = ConnectionStatus.NC;
     }
 
     public void doResetAdapter(Context runContext) throws ObdResponseException {
-        Logger.d(TAG, "Queing jobs for connection configuration..");
+        Logger.d(context, TAG, "Queing jobs for connection configuration..");
         if (executeCommand(new ObdResetFixCommand(), runContext)) {
             sendStatus("Сброс адаптера");
             if (executeCommand(new EchoOffObdCommand(), runContext))
@@ -112,7 +111,7 @@ public class BtObdConnectionHelper {
     public void doSelectProtocol(ObdProtocols prot, Context runContext) throws BTOBDConnectionException {
         // For now set protocol to AUTO
 
-        Logger.d(TAG, "Selecting protocol: " + prot.name());
+        Logger.d(context, TAG, "Selecting protocol: " + prot.name());
         executeCommand(new SelectProtocolObdCommand(prot), runContext);
         sendStatus("Выставление протокола");
         connectionStatus = ConnectionStatus.PROTOCOL_SELECTED;
@@ -123,7 +122,7 @@ public class BtObdConnectionHelper {
             e.printStackTrace();
         }
         if (!executeCommand(new AmbientAirTemperatureObdCommand(), runContext)) {
-            Logger.w(TAG, "Unable to select protocol");
+            Logger.w(context, TAG, "Unable to select protocol");
             throw new BTOBDConnectionException("Unable to select protocol");
         }
         sendStatus("В работе");
@@ -134,7 +133,7 @@ public class BtObdConnectionHelper {
         try {
             cmd.run(sock.getInputStream(), sock.getOutputStream());
         } catch (Exception e) {
-            Logger.e(TAG, "Unable to execute command", e);
+            Logger.e(context, TAG, "Unable to execute command", e);
 //            if (e instanceof ObdResponseException)
 //                throw (ObdResponseException) e;
             return false;

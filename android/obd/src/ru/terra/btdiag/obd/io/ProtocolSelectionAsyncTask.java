@@ -65,17 +65,17 @@ public class ProtocolSelectionAsyncTask extends AsyncTaskEx<Void, String, String
 
         while (!found) {
             if (tryes > ObdProtocols.values().length + 5) {
-                Logger.w(TAG, "Too many tries");
+                Logger.w(context, TAG, "Too many tries");
                 break;
             }
             try {
                 publishProgress("Сброс адаптера");
-                Logger.d(TAG, "Сброс адаптера");
+                Logger.d(context, TAG, "Сброс адаптера");
                 try {
                     tryes++;
                     connectionHelper.doResetAdapter(context);
                 } catch (Exception e) {
-                    Logger.e(TAG, "Controller unable to ATZ command, reconnect", e);
+                    Logger.e(context, TAG, "Controller unable to ATZ command, reconnect", e);
 //                    ACRA.getErrorReporter().handleSilentException(e);
 //                    stopTask();
                     try {
@@ -89,19 +89,19 @@ public class ProtocolSelectionAsyncTask extends AsyncTaskEx<Void, String, String
 
                 ObdProtocols protocol = ObdProtocols.values()[currentProtocol];
                 publishProgress("Пробуем протокол: " + protocol.name());
-                Logger.d(TAG, "Trying protocol " + protocol.name());
+                Logger.d(context, TAG, "Trying protocol " + protocol.name());
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
-                    Logger.w(TAG, "Sleeping interrupted", e);
+                    Logger.w(context, TAG, "Sleeping interrupted", e);
                 }
                 try {
                     if (execCommand(new TryProtocolCommand(protocol))) {
                         GetAvailPIDSCommand tryCmd = new GetAvailPIDSCommand();
                         if (execCommand(tryCmd)) {
-                            Logger.d(TAG, "Try cmd result = " + tryCmd.getResult());
+                            Logger.d(context, TAG, "Try cmd result = " + tryCmd.getResult());
                             found = true;
-                            Logger.i(TAG, "Протокол " + protocol.name() + " подходит");
+                            Logger.i(context, TAG, "Протокол " + protocol.name() + " подходит");
                             publishProgress("Протокол " + protocol.name() + " подходит");
                             settingsService.saveSetting(context.getString(R.string.obd_protocol), protocol.name());
                             try {
@@ -110,7 +110,7 @@ public class ProtocolSelectionAsyncTask extends AsyncTaskEx<Void, String, String
 //                e.printStackTrace();
                             }
                         } else {
-                            Logger.w(TAG, "Unable to get avail pids");
+                            Logger.w(context, TAG, "Unable to get avail pids");
                             publishProgress("Протокол " + protocol.name() + " не подходит");
                             try {
                                 Thread.sleep(500);
@@ -120,7 +120,7 @@ public class ProtocolSelectionAsyncTask extends AsyncTaskEx<Void, String, String
 
                         }
                     } else
-                        Logger.w(TAG, "Unable to try protocol");
+                        Logger.w(context, TAG, "Unable to try protocol");
 
                 } catch (Exception e) {
                     publishProgress("Протокол " + protocol.name() + " не подходит");

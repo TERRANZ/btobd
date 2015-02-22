@@ -1,5 +1,6 @@
 package ru.terra.btdiag.net.core;
 
+import android.content.Context;
 import com.google.gson.Gson;
 import com.google.inject.Inject;
 import org.apache.http.*;
@@ -10,10 +11,10 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import roboguice.inject.ContextSingleton;
-import ru.terra.btdiag.core.constants.Constants;
-import ru.terra.btdiag.core.constants.URLConstants;
 import ru.terra.btdiag.core.Logger;
 import ru.terra.btdiag.core.SettingsService;
+import ru.terra.btdiag.core.constants.Constants;
+import ru.terra.btdiag.core.constants.URLConstants;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -30,9 +31,11 @@ public class HttpRequestHelper {
 
     @Inject
     private SettingsService settingsService;
+    private Context context;
 
     @Inject
-    public HttpRequestHelper() {
+    public HttpRequestHelper(Context context) {
+        this.context = context;
         hc = new DefaultHttpClient();
         hc.getParams().setParameter("http.protocol.content-charset", "UTF-8");
     }
@@ -45,17 +48,17 @@ public class HttpRequestHelper {
     private JsonResponce runRequest(HttpUriRequest httpRequest) throws UnableToLoginException, IOException {
         httpRequest.setHeader("Cookie", "JSESSIONID=" + settingsService.getSetting(Constants.CONFIG_SESSION, ""));
         for (Header h : httpRequest.getAllHeaders()) {
-            Logger.i("runRequest", "header: " + h.getName() + " = " + h.getValue());
+            Logger.i(context, "runRequest", "header: " + h.getName() + " = " + h.getValue());
         }
-        Logger.i("runRequest", "header: " + httpRequest.getHeaders("Cookie"));
+        Logger.i(context, "runRequest", "header: " + httpRequest.getHeaders("Cookie"));
         HttpResponse response = null;
         try {
             response = hc.execute(httpRequest);
         } catch (ConnectException e) {
-            Logger.w("HttpRequestHelper", "Connect exception " + e.getMessage());
+            Logger.w(context, "HttpRequestHelper", "Connect exception " + e.getMessage());
             return null;
         } catch (IllegalStateException e) {
-            Logger.w("HttpRequestHelper", "IllegalStateException " + e.getMessage());
+            Logger.w(context, "HttpRequestHelper", "IllegalStateException " + e.getMessage());
             return null;
         }
         StatusLine statusLine = response.getStatusLine();
@@ -83,7 +86,7 @@ public class HttpRequestHelper {
         try {
             return runRequest(request);
         } catch (Exception e) {
-            Logger.w("HttpRequestHelper", "Failed to form request content" + e.getMessage());
+            Logger.w(context, "HttpRequestHelper", "Failed to form request content" + e.getMessage());
             return new JsonResponce(null);
         }
     }
@@ -104,7 +107,7 @@ public class HttpRequestHelper {
         try {
             return runRequest(request);
         } catch (Exception e) {
-            Logger.w("HttpRequestHelper", "Failed to form request content" + e.getMessage());
+            Logger.w(context, "HttpRequestHelper", "Failed to form request content" + e.getMessage());
             return new JsonResponce(null);
         }
     }

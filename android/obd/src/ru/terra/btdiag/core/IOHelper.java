@@ -22,7 +22,7 @@ public class IOHelper {
 				sb.append(str).append(SEPARATOR);
 			}
 		} catch (IOException e) {
-            Logger.e(IOHelper.class.getSimpleName(), "error loading resource by id = " + resourceId, e);
+            Log.e(IOHelper.class.getSimpleName(), "error loading resource by id = " + resourceId, e);
 			throw new RuntimeException(e);
 		}
 		return sb.toString();

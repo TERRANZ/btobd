@@ -60,7 +60,7 @@ public class TroublesActivity extends RoboListActivity {
 
         remoteDevice = prefs.getString(ConfigActivity.BLUETOOTH_LIST_KEY, null);
         if (remoteDevice == null || "".equals(remoteDevice)) {
-            Logger.w(TAG, "No Bluetooth device has been selected.");
+            Logger.w(this, TAG, "No Bluetooth device has been selected.");
             mHandler.obtainMessage(NO_BLUETOOTH_DEVICE_SELECTED).sendToTarget();
         } else {
             gtct = new GetTroubleCodesTask();
@@ -155,8 +155,8 @@ public class TroublesActivity extends RoboListActivity {
                 onProgressUpdate(6);
                 TroubleCodesObdCommand tcoc = new TroubleCodesObdCommand();
                 connectionHelper.executeCommand(tcoc, TroublesActivity.this);
-                Logger.d(TAG, "Trouble command result: " + tcoc.getResult());
-                Logger.d(TAG, "Trouble command formatted result: " + tcoc.getFormattedResult());
+                Logger.d(TroublesActivity.this, TAG, "Trouble command result: " + tcoc.getResult());
+                Logger.d(TroublesActivity.this, TAG, "Trouble command formatted result: " + tcoc.getFormattedResult());
                 return tcoc.getFormattedResult();
             } catch (Exception e) {
                 e.printStackTrace();
