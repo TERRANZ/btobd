@@ -7,7 +7,7 @@
     <properties>
       <property name="eclipselink.jdbc.cache-statements" value="true"/>
       <property name="eclipselink.logging.timestamp" value="true"/>
-      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://terranout.ath.cx:3306/obd"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/obd"/>
       <property name="javax.persistence.jdbc.password" value="to"/>
       <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
       <property name="javax.persistence.jdbc.user" value="to"/>

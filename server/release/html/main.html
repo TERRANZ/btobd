@@ -160,9 +160,10 @@ function userLogin() {
             },
             success: function(data) {
                 $("#loginbtn").removeClass('ui-disabled');
-                if (data.logged == "true") {
-                    setCookie("JSESSIONID", data.session);
-                    setCookie("username", user);
+                if (data.logged == true) {
+                    setCookie2("username", user,{expires: 36000,path:"/btobd"});
+                    setCookie2("password", pass,{expires: 36000,path:"/btobd"});
+                    setCookie2("JSESSIONID", data.session,{expires: 36000,path:"/btobd"});
                     $.mobile.changePage("#main");
                 } else {
                     if (parseInt(data.errorCode) == 1000) {
@@ -178,6 +179,36 @@ function userLogin() {
         });
     }
 }
+
+function setCookie2(name, value, options) {
+  options = options || {};
+
+  var expires = options.expires;
+
+  if (typeof expires == "number" && expires) {
+    var d = new Date();
+    d.setTime(d.getTime() + expires*1000);
+    expires = options.expires = d;
+  }
+  if (expires && expires.toUTCString) {
+  	options.expires = expires.toUTCString();
+  }
+
+  value = encodeURIComponent(value);
+
+  var updatedCookie = name + "=" + value;
+
+  for(var propName in options) {
+    updatedCookie += "; " + propName;
+    var propValue = options[propName];
+    if (propValue !== true) {
+      updatedCookie += "=" + propValue;
+     }
+  }
+
+  document.cookie = updatedCookie;
+}
+
 
 function setCookie(key, value) {
     var expires = new Date();
@@ -282,7 +313,7 @@ function loadParams(){
             var htmlRet = "";
             if (data.errorCode == 0) {
                 $.each(data.data, function(i, c) {
-                        htmlRet += "<li><a href='#chart' name='"+c.$+"' onclick='loadChart(this);'>"+c.$+"</a></li>";
+                        htmlRet += "<li><a href='#chart' name='"+c+"' onclick='loadChart(this);'>"+c+"</a></li>";
                 });
                 $("#paramslist").html(htmlRet);
             }
@@ -300,7 +331,7 @@ $.ajax({
             if (data.errorCode == 0) {
                 var values = [];
                 $.each(data.data, function(i, r) {
-                    values.push(r.$.match("\\d+"));
+                    values.push(r.match("\\d+"));
                 });
                 var rows = [];
                 for (var i = 0; i < values.length; i++)

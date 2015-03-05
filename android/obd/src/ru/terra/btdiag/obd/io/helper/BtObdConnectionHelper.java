@@ -6,6 +6,7 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import pt.lighthouselabs.obd.commands.ObdCommand;
 import pt.lighthouselabs.obd.enums.ObdProtocols;
@@ -36,6 +37,7 @@ public class BtObdConnectionHelper {
     private String remoteDevice;
     private ConnectionStatus connectionStatus = ConnectionStatus.NC;
 
+    @Inject
     public BtObdConnectionHelper(Context context) {
         this.context = context;
     }
